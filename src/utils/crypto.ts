@@ -1,7 +1,7 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
 const SECRET =
-  process.env.ZING_MP3_SECRET || "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW";
+  process.env.ZING_MP3_SECRET || 'acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW';
 
 const keyPrior: Record<string, number> = {
   ctime: 0,
@@ -10,21 +10,21 @@ const keyPrior: Record<string, number> = {
 };
 
 export const createSha256 = (s: string) => {
-  return crypto.createHash("sha256").update(s).digest("hex");
+  return crypto.createHash('sha256').update(s).digest('hex');
 };
 
 export const createHmac512 = (str: string, key: string) => {
   return crypto
-    .createHmac("sha512", key)
-    .update(Buffer.from(str, "utf8"))
-    .digest("hex");
+    .createHmac('sha512', key)
+    .update(Buffer.from(str, 'utf8'))
+    .digest('hex');
 };
 
 export const computeSignature = (
   path: string,
   params: Record<string, string>
 ) => {
-  let hashStr = "";
+  let hashStr = '';
   Object.keys(params)
     .sort((a, b) => keyPrior[a] - keyPrior[b])
     .forEach((key) => {
