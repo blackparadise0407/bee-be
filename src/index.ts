@@ -17,11 +17,14 @@ config();
 import { notFound } from '@/middlewares/notFound';
 import { computeSignature } from '@/utils/crypto';
 import { init } from '@/utils/initializer';
-import { ROOT_DIR } from '@/utils/utils';
+import { IS_PROD, ROOT_DIR } from '@/utils/utils';
 
-const errorLogStream = fs.createWriteStream(path.join(ROOT_DIR, '.logs'), {
-  flags: 'a',
-});
+const errorLogStream = fs.createWriteStream(
+  path.join(ROOT_DIR, '.logs', 'access.log'),
+  {
+    flags: 'a',
+  }
+);
 
 const ZING_BASE_URL = process.env.ZING_MP3_BASE_URL || 'https://zingmp3.vn';
 const ZING_VERSION = process.env.ZING_MP3_VERSION || '1.7.28';
@@ -48,11 +51,15 @@ app.use(
     origin: '*',
   })
 );
-app.use(
-  morgan('dev', {
-    stream: errorLogStream,
-  })
-);
+if (IS_PROD) {
+  app.use(
+    morgan('combined', {
+      stream: errorLogStream,
+    })
+  );
+} else {
+  app.use(morgan('dev'));
+}
 
 init(jar, '/', async () => {
   const { config } = await client.get('/');
